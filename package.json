@@ -1,0 +1,11 @@
+{
+  "name": "google-map-chart-marker-clusterer",
+  "version": "1.0.0",
+  "description": "Google Map Chart Marker Clusterer",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/langdonx/google-map-chart-marker-clusterer.git"
+  },
+  "author": "",
+  "license": "ISC"
+}
