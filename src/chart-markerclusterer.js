@@ -38,7 +38,7 @@
  *                cluster.
  *     'zoomOnClick': (boolean) Whether the default behaviour of clicking on a
  *                    cluster is to zoom into it.
- *     'averageCenter': (boolean) Wether the center of each cluster should be
+ *     'averageCenter': (boolean) Whether the center of each cluster should be
  *                      the average of all markers in the cluster.
  *     'minimumClusterSize': (number) The minimum number of markers to be in a
  *                           cluster before the markers are hidden and a count
@@ -103,7 +103,7 @@ function MarkerClusterer(map, opt_markers, opt_options) {
   /**
    * @private
    */
-  this.minClusterSize_ = options['minimumClusterSize'] || 2;
+  this.minClusterSize_ = options['minimumClusterSize'] || 1;
 
 
   /**
@@ -153,7 +153,7 @@ function MarkerClusterer(map, opt_markers, opt_options) {
   if (opt_markers && opt_markers.length) {
     this.setupLegend_(opt_markers);
   }
-  //console.log(opt_markers);
+
   this.setMap(map);
 
   /**
@@ -191,8 +191,7 @@ function MarkerClusterer(map, opt_markers, opt_options) {
  * @type {string}
  * @private
  */
-MarkerClusterer.prototype.MARKER_CLUSTER_IMAGE_PATH_ = 'http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/' +
-  'images/m';
+MarkerClusterer.prototype.MARKER_CLUSTER_IMAGE_PATH_ = '../images/m';
 
 
 /**
@@ -520,7 +519,7 @@ MarkerClusterer.prototype.pushMarkerTo_ = function(marker) {
  * @param {google.maps.Marker} marker The marker to add.
  * @param {boolean=} opt_nodraw Whether to redraw the clusters.
  */
-MarkerClusterer.prototype.addMarker = function(marker, opt_nodraw) { //Hassan
+MarkerClusterer.prototype.addMarker = function(marker, opt_nodraw) {
   this.pushMarkerTo_(marker);
   if (!opt_nodraw) {
     this.redraw();
@@ -966,8 +965,7 @@ Cluster.prototype.addMarker = function(marker) {
   marker.isAdded = true;
   this.markers_.push(marker);
 
-  this.chartData_[marker.getTitle()]++; //Hassan
-  //console.log(this.chartData_);
+  this.chartData_[marker.getTitle()]++;
 
   var len = this.markers_.length;
   if (len < this.minClusterSize_ && marker.getMap() != this.map_) {
@@ -1225,7 +1223,6 @@ ClusterIcon.prototype.draw = function() {
     this.chart_div_.style.top = pos.y + 'px';
     this.chart_div_.style.left = pos.x + 'px';
     this.renderCharts_();
-
   }
 };
 
@@ -1265,7 +1262,6 @@ ClusterIcon.prototype.show = function() {
 
 };
 
-
 ClusterIcon.prototype.renderCharts_ = function() {
 
   var clusterChartData = this.cluster_.getChartData();
@@ -1286,11 +1282,14 @@ ClusterIcon.prototype.renderCharts_ = function() {
   }
 
   var data = google.visualization.arrayToDataTable(dataArray);
+  var index = Math.max(0, this.sums_.index - 1);
+  index = Math.min(this.styles_.length - 1, index);
+  var style = this.styles_[index];
   var options = {
-    fontSize: 8,
+    fontSize: style['textSize'],
     backgroundColor: 'transparent',
     legend: 'none',
-    pieHole: 0.5,
+    pieHole: style['pieHole'],
     tooltip: {
       text: 'value'
     },
@@ -1357,7 +1356,7 @@ ClusterIcon.prototype.useStyle = function() {
   var index = Math.max(0, this.sums_.index - 1);
   index = Math.min(this.styles_.length - 1, index);
   var style = this.styles_[index];
-  //this.url_ = style['url'];
+  this.url_ = style['url'];
   this.height_ = style['height'];
   this.width_ = style['width'];
   this.textColor_ = style['textColor'];
