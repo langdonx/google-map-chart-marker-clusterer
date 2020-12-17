@@ -1290,9 +1290,6 @@ ClusterIcon.prototype.renderCharts_ = function() {
     backgroundColor: 'transparent',
     legend: 'none',
     pieHole: style['pieHole'],
-    tooltip: {
-      text: 'value'
-    },
     colors: chartColorsSeq,
     pieSliceText: 'none'
   };
