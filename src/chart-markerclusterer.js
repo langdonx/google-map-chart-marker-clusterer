@@ -150,10 +150,6 @@ function ChartMarkerClusterer(map, opt_markers, opt_options) {
 
   this.setupStyles_();
 
-  if (opt_markers && opt_markers.length) {
-    this.setupLegend_(opt_markers);
-  }
-
   this.setMap(map);
 
   /**
@@ -280,34 +276,35 @@ ChartMarkerClusterer.prototype.setupLegend_ = function(markers) {
       }
     }
   }
-
   var colorIndex = 0;
-  for (var i = 0, marker; marker = markers[i]; i++) {
-    if (!(marker.title in this.legend_)) {
-      this.legend_[marker.title] = (colorSeries[colorIndex]);
-      markerSymbol["fillColor"] = (colorSeries[colorIndex]);
-      marker.setIcon(markerSymbol);
-      colorIndex++;
-    } else {
-      markerSymbol["fillColor"] = this.legend_[marker.title];
-      marker.setIcon(markerSymbol);
+  if (markers && markers.length > 0) {
+    for (var i = 0, marker; marker = markers[i]; i++) {
+      if (!(marker.title in this.legend_)) {
+        this.legend_[marker.title] = (colorSeries[colorIndex]);
+        markerSymbol["fillColor"] = (colorSeries[colorIndex]);
+        marker.setIcon(markerSymbol);
+        colorIndex++;
+      } else {
+        markerSymbol["fillColor"] = this.legend_[marker.title];
+        marker.setIcon(markerSymbol);
+      }
     }
   }
 
-  var legend_div = document.createElement('DIV');
-  legend_div.style.cssText = "margin-right: 5px; background-color: rgba(255, 255, 255, 0.9); padding: 10px; width: 123px";
-  this.map_.controls[google.maps.ControlPosition.RIGHT_TOP].push(legend_div);
+  this.legend_div_ = document.createElement('DIV');
+  this.legend_div_.style.cssText = "margin-right: 5px; background-color: rgba(255, 255, 255, 0.9); padding: 10px; width: 123px";
+  this.map_.controls[google.maps.ControlPosition.RIGHT_TOP].push(this.legend_div_);
 
   for (var title in this.legend_) {
     var color = this.legend_[title];
     var color_div = document.createElement('div');
     color_div.style.cssText = "float: left; margin:0; overflow:hidden; background-color:" + color + "; width: 12px; height: 12px;";
-    legend_div.appendChild(color_div);
+    this.legend_div_.appendChild(color_div);
 
     var title_div = document.createElement('div');
     title_div.innerHTML = title;
     title_div.style.cssText = "padding-bottom: 5px; padding-left: 5%; float: left; margin-left:0; width:80%; overflow:hidden;";
-    legend_div.appendChild(title_div);
+    this.legend_div_.appendChild(title_div);
 
 
   }
@@ -487,6 +484,7 @@ ChartMarkerClusterer.prototype.addMarkers = function(markers, opt_nodraw) {
     this.pushMarkerTo_(marker);
   }
   if (!opt_nodraw) {
+    this.setupLegend_(markers);
     this.redraw();
   }
 };
@@ -742,6 +740,12 @@ ChartMarkerClusterer.prototype.clearMarkers = function() {
 
   // Set the markers a empty array.
   this.markers_ = [];
+
+  // hide the legend and let it redraw as needed
+  if (this.legend_div_) {
+    this.legend_div_.parentNode.removeChild(this.legend_div_);
+    delete this.legend_div_;
+  }
 };
 
 
